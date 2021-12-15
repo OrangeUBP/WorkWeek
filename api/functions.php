@@ -28,3 +28,60 @@ function getEmployee($connect, $id)
         echo json_encode($employee);
     }
 }
+
+function getProjects($connect)
+{
+    $projects = mysqli_query($connect, "SELECT * FROM `projects`");
+    $projectsList = [];
+
+    while ($project = mysqli_fetch_assoc($projects)){
+        $projectsList[] = $project;
+    }
+
+    echo json_encode($projectsList);
+}
+
+function getProject($connect, $id)
+{
+    $project = mysqli_query($connect, "SELECT * FROM `projects` WHERE `id` = '$id'");
+
+    if (mysqli_num_rows($project) === 0){
+        http_response_code(404);
+        $res = [
+            "status" => false,
+            "message" => "Post not found"
+        ];
+        echo json_encode($res);
+    } else {
+        $project = mysqli_fetch_assoc($project);
+        echo json_encode($project);
+    }
+}
+
+function addEmployee($connect, $data){
+    $name = $data['name'];
+    mysqli_query($connect, "INSERT INTO `employees` (name) VALUES ('$name')");
+
+    http_response_code(201);
+
+    $res = [
+        "status" => true,
+        "employee_id" => mysqli_insert_id($connect)
+    ];
+
+    echo json_encode($res);
+}
+
+function addProject($connect, $data){
+    $name = $data['name'];
+    mysqli_query($connect, "INSERT INTO `projects` (name) VALUES ('$name')");
+
+    http_response_code(201);
+
+    $res = [
+        "status" => true,
+        "project_id" => mysqli_insert_id($connect)
+    ];
+
+    echo json_encode($res);
+}
