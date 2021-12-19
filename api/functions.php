@@ -85,3 +85,17 @@ function addProject($connect, $data){
 
     echo json_encode($res);
 }
+
+function updateEmployee($connect, $id, $data){
+    $name = $data['name'];
+    mysqli_query($connect, "UPDATE `employees` SET `name` = '$name' WHERE `employees`.`id` = '$id'");
+
+    http_response_code(200);
+
+    $res = [
+        "status" => true,
+        "project_id" => "Employee is updated"
+    ];
+
+    echo json_encode($res);
+}
