@@ -20,7 +20,7 @@ function getEmployee($connect, $id)
         http_response_code(404);
         $res = [
             "status" => false,
-            "message" => "Post not found"
+            "message" => "Project not found"
         ];
         echo json_encode($res);
     } else {
@@ -49,7 +49,7 @@ function getProject($connect, $id)
         http_response_code(404);
         $res = [
             "status" => false,
-            "message" => "Post not found"
+            "message" => "Project not found"
         ];
         echo json_encode($res);
     } else {
@@ -60,6 +60,11 @@ function getProject($connect, $id)
 
 function addEmployee($connect, $data){
     $name = $data['name'];
+
+    if(isEmptyName($name)){
+        return;
+    }
+
     mysqli_query($connect, "INSERT INTO `employees` (name) VALUES ('$name')");
 
     http_response_code(201);
@@ -74,6 +79,11 @@ function addEmployee($connect, $data){
 
 function addProject($connect, $data){
     $name = $data['name'];
+
+    if(isEmptyName($name)){
+        return;
+    }
+
     mysqli_query($connect, "INSERT INTO `projects` (name) VALUES ('$name')");
 
     http_response_code(201);
@@ -88,14 +98,85 @@ function addProject($connect, $data){
 
 function updateEmployee($connect, $id, $data){
     $name = $data['name'];
+
+    if(isEmptyName($name)){
+        return;
+    }
+
     mysqli_query($connect, "UPDATE `employees` SET `name` = '$name' WHERE `employees`.`id` = '$id'");
 
     http_response_code(200);
 
     $res = [
         "status" => true,
-        "project_id" => "Employee is updated"
+        "message" => "Employee is updated"
     ];
 
     echo json_encode($res);
 }
+
+function updateProject($connect, $id, $data){
+    $name = $data['name'];
+
+    if(isEmptyName($name)){
+        return;
+    }
+
+    mysqli_query($connect, "UPDATE `projects` SET `name` = '$name' WHERE `projects`.`id` = '$id'");
+
+    http_response_code(200);
+
+    $res = [
+        "status" => true,
+        "message" => "Project is updated"
+    ];
+
+    echo json_encode($res);
+}
+
+function deleteEmployee($connect, $id){
+
+    $emp = mysqli_query($connect, "DELETE FROM `employees` WHERE `employees`.`id` = '$id'");
+
+    http_response_code(200);
+
+    $res = [
+        "status" => true,
+        "message" => "Employee is deleted"
+    ];
+
+    //echo json_encode($res);
+    echo $emp;
+}
+
+
+function deleteProject($connect, $id){
+
+    mysqli_query($connect, "DELETE FROM `projects` WHERE `projects`.`id` = '$id'");
+
+    http_response_code(200);
+
+    $res = [
+        "status" => true,
+        "message" => "Project is deleted"
+    ];
+
+    echo json_encode($res);
+}
+
+function isEmptyName($name){
+    if(empty($name)){
+        http_response_code(400);
+
+        $res = [
+            "status" => false,
+            "message" => "Field is empty"
+        ];
+
+        echo json_encode($res);
+        return true;
+    }else{
+        return false;
+    }
+}
+
