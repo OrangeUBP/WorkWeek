@@ -41,6 +41,11 @@ switch($method) {
                 }
                 break;
             }
+
+            case 'week': {
+                getWeek($connect);
+                break;
+            }
         }
         break;
     }
@@ -56,6 +61,11 @@ switch($method) {
 
             case 'projects': {
                 addProject($connect, $_POST);
+                break;
+            }
+
+            case 'week' :{
+                addProjectWeek($connect, $_POST);
                 break;
             }
         }
@@ -85,6 +95,16 @@ switch($method) {
                 }
                 break;
             }
+
+            case 'week':{
+                if (isset($id)){
+                    $data = file_get_contents('php://input');
+                    $data = json_decode($data, true);
+
+                    updateWeek($connect, $id, $data);
+                }
+                break;
+            }
         }
         break;
     }
@@ -103,6 +123,13 @@ switch($method) {
             case 'projects': {
                 if (isset($id)){
                     deleteProject($connect, $id);
+                }
+                break;
+            }
+
+            case 'week': {
+                if (isset($id)){
+                    deleteWeek($connect, $id);
                 }
                 break;
             }

@@ -136,6 +136,10 @@ function updateProject($connect, $id, $data){
 
 function deleteEmployee($connect, $id){
 
+    if(isEmptyName($id)){
+        return;
+    }
+
     $emp = mysqli_query($connect, "DELETE FROM `employees` WHERE `employees`.`id` = '$id'");
 
     http_response_code(200);
@@ -149,8 +153,11 @@ function deleteEmployee($connect, $id){
     echo $emp;
 }
 
-
 function deleteProject($connect, $id){
+
+    if(isEmptyName($id)){
+        return;
+    }
 
     mysqli_query($connect, "DELETE FROM `projects` WHERE `projects`.`id` = '$id'");
 
@@ -159,6 +166,85 @@ function deleteProject($connect, $id){
     $res = [
         "status" => true,
         "message" => "Project is deleted"
+    ];
+
+    echo json_encode($res);
+}
+
+function getWeek($connect)
+{
+    $data = mysqli_query($connect, "SELECT * FROM `week`");
+    $weekList = [];
+
+    while ($week = mysqli_fetch_assoc($data)){
+        $weekList[] = $week;
+    }
+
+    echo json_encode($weekList);
+}
+
+function addProjectWeek($connect, $data){
+
+    $id = $data['id'];
+
+    if(isEmptyName($id)){
+        return;
+    }
+
+    for ($i = 1; $i <= 7; $i++){
+        mysqli_query($connect, "INSERT INTO `week`(`project_id`, `day`) VALUES ('$id','$i')");
+    }
+
+    http_response_code(201);
+
+    $res = [
+        "status" => true,
+        "message" => "Project is added to week"
+    ];
+
+    echo json_encode($res);
+}
+
+function deleteWeek($connect, $id){
+
+    if(isEmptyName($id)){
+        return;
+    }
+
+    mysqli_query($connect, "DELETE FROM `week` WHERE `project_id` = '$id'");
+
+    http_response_code(200);
+
+    $res = [
+        "status" => true,
+        "message" => "Project deleted from week"
+    ];
+
+    echo json_encode($res);
+}
+
+function updateWeek($connect, $id, $data){
+    $employeeId = $data['id'];
+
+    if(empty($employeeId)){
+        mysqli_query($connect, "UPDATE `week` SET `employee_id` = '$employeeId' WHERE `week`.`id` = NULL");
+        http_response_code(200);
+        $res = [
+            "status" => true,
+            "message" => "Employee deleted from week"
+        ];
+
+        echo json_encode($res);
+        return;
+    }
+
+    mysqli_query($connect, "UPDATE `week` SET `employee_id` = '$employeeId' WHERE `week`.`id` = '$id'");
+
+    http_response_code(200);
+
+    $res = [
+        "status" => true,
+        "message" => "Employee added to week"
     ];
 
     echo json_encode($res);
